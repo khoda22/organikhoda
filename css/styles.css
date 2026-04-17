@@ -1,0 +1,85 @@
+:root {
+    --primary: #0056b3; /* Azul profesional */
+    --danger: #d9534f;  /* Rojo */
+    --success: #28a745;
+    --white: #ffffff;
+    --bg: #f8f9fa;
+    --text: #333;
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    margin: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.view {
+    width: 100%;
+    max-width: 480px;
+    min-height: 100vh;
+    padding: 25px;
+    box-sizing: border-box;
+}
+
+.hidden { display: none; }
+
+.brand {
+    font-size: 2.2rem;
+    color: var(--primary);
+    text-align: center;
+    margin-top: 60px;
+    letter-spacing: -1px;
+}
+
+.btn {
+    width: 100%;
+    padding: 18px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn-primary { background: var(--primary); color: white; }
+.btn-danger { background: var(--danger); color: white; }
+.btn-success { background: var(--success); color: white; }
+.btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+.btn-back { background: #e0e0e0; color: #555; margin-top: 40px; }
+
+input[type="text"] {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    font-size: 16px; /* Evita zoom automático en iOS */
+    box-sizing: border-box;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.task-item {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+input[type="checkbox"] { transform: scale(1.4); }
