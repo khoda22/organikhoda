@@ -128,3 +128,106 @@ function deleteActivity(id) {
 
 // Vincular el botón de quitar del inicio
 document.querySelector('.btn-danger').onclick = () => renderDeletePage();
+
+// LÓGICA DE RACHA
+function updateStreak() {
+    const db = getDB();
+    const streakData = JSON.parse(localStorage.getItem('organikhoda_streak')) || { count: 0, lastDate: null };
+    const today = new Date().toLocaleDateString();
+
+    // Si la última vez fue ayer, se mantiene la racha. Si fue antes, se pierde.
+    // Para simplificar: solo aumenta si hoy completaste algo y ayer también.
+    document.getElementById('streak-count').innerText = streakData.count;
+}
+
+// Modificar la función completeTask para que afecte la racha
+function completeTask(index) {
+    if (confirm("¿Tarea terminada?")) {
+        const db = getDB();
+        const act = db.find(a => a.id === currentActivityId);
+        act.tareas.splice(index, 1);
+        saveDB(db);
+        
+        // Lógica Racha
+        handleStreakLogic();
+        
+        alert("¡Tarea terminada! 🔥");
+        showDetail(currentActivityId);
+        updateStreak();
+    }
+}
+
+function handleStreakLogic() {
+    let streakData = JSON.parse(localStorage.getItem('organikhoda_streak')) || { count: 0, lastDate: null };
+    const today = new Date().toLocaleDateString();
+
+    if (streakData.lastDate !== today) {
+        streakData.count++;
+        streakData.lastDate = today;
+        localStorage.setItem('organikhoda_streak', JSON.stringify(streakData));
+    }
+}
+
+// NUEVA FUNCIÓN: RENDER RESUMEN (DRAGGABLE)
+function renderSummary() {
+    const container = document.getElementById('summary-content');
+    const db = getDB();
+    container.innerHTML = "";
+
+    db.forEach((act, actIdx) => {
+        const actBlock = document.createElement('div');
+        actBlock.className = 'summary-block';
+        actBlock.dataset.id = act.id;
+        actBlock.innerHTML = `<h3>${act.nombre}</h3><div class="task-sortable" id="tasks-${actIdx}"></div>`;
+        
+        const taskContainer = actBlock.querySelector('.task-sortable');
+        
+        act.tareas.forEach((tarea, taskIdx) => {
+            const tDiv = document.createElement('div');
+            tDiv.className = 'drag-item';
+            tDiv.innerText = tarea;
+            taskContainer.appendChild(tDiv);
+        });
+
+        container.appendChild(actBlock);
+
+        // Hacer tareas movibles dentro de la actividad
+        new Sortable(taskContainer, {
+            animation: 150,
+            onEnd: () => saveOrder()
+        });
+    });
+
+    // Hacer actividades movibles entre sí
+    new Sortable(container, {
+        animation: 150,
+        onEnd: () => saveOrder()
+    });
+
+    navigateTo('page-summary');
+}
+
+// GUARDAR EL NUEVO ORDEN
+function saveOrder() {
+    const newDb = [];
+    document.querySelectorAll('.summary-block').forEach(block => {
+        const id = parseInt(block.dataset.id);
+        const originalAct = getDB().find(a => a.id === id);
+        
+        const updatedTasks = [];
+        block.querySelectorAll('.drag-item').forEach(item => {
+            updatedTasks.push(item.innerText);
+        });
+        
+        newDb.push({
+            ...originalAct,
+            tareas: updatedTasks
+        });
+    });
+    saveDB(newDb);
+}
+
+// Al cargar la app
+document.addEventListener('DOMContentLoaded', () => {
+    updateStreak();
+});

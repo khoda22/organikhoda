@@ -1,85 +1,180 @@
+/* VARIABLES DE COLOR - PALETA VIBRANTE */
 :root {
-    --primary: #0056b3; /* Azul profesional */
-    --danger: #d9534f;  /* Rojo */
-    --success: #28a745;
+    --primary: #4158D0;      /* Azul principal */
+    --accent: #C850C0;       /* Rosa/Morado */
+    --warning: #FFCC70;      /* Color racha / Fuego */
+    --danger: #ff4d4d;       /* Rojo eliminación */
+    --success: #00ff87;      /* Verde éxito */
     --white: #ffffff;
-    --bg: #f8f9fa;
-    --text: #333;
+    --bg: #1a1a2e;           /* Fondo oscuro profundo */
+    --text: #ffffff;
 }
 
+/* RESET Y ESTILOS BASE */
 body {
-    font-family: 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     background-color: var(--bg);
+    background-image: linear-gradient(43deg, #1a1a2e 0%, #16213e 46%, #0f3460 100%);
+    background-attachment: fixed;
     color: var(--text);
     margin: 0;
     display: flex;
     justify-content: center;
+    min-height: 100vh;
 }
 
+/* CONTENEDORES DE PÁGINA */
 .view {
     width: 100%;
     max-width: 480px;
     min-height: 100vh;
     padding: 25px;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
 }
 
-.hidden { display: none; }
+.hidden { display: none !important; }
 
+/* LOGOTIPO / BRANDING */
 .brand {
-    font-size: 2.2rem;
-    color: var(--primary);
+    font-size: 2.5rem;
     text-align: center;
-    margin-top: 60px;
+    margin-top: 50px;
+    margin-bottom: 30px;
+    font-weight: 800;
+    background: linear-gradient(to right, #00ff87, #60efff);
+    
+    /* CORRECCIÓN DE COMPATIBILIDAD SOLICITADA */
+    -webkit-background-clip: text;
+    background-clip: text; 
+    -webkit-text-fill-color: transparent;
+    
     letter-spacing: -1px;
 }
 
+/* BOTONES */
 .btn {
     width: 100%;
     padding: 18px;
     margin: 10px 0;
     border: none;
-    border-radius: 12px;
+    border-radius: 20px;
     font-size: 1rem;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
-    transition: opacity 0.2s;
+    color: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transition: transform 0.2s, opacity 0.2s;
 }
 
-.btn-primary { background: var(--primary); color: white; }
-.btn-danger { background: var(--danger); color: white; }
-.btn-success { background: var(--success); color: white; }
-.btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
-.btn-back { background: #e0e0e0; color: #555; margin-top: 40px; }
+.btn:active {
+    transform: scale(0.98);
+}
 
+.btn-primary { background: linear-gradient(to right, #4158D0, #C850C0); }
+.btn-danger { background: var(--danger); }
+.btn-info { background: #4e00c2; }
+.btn-summary { background: linear-gradient(to right, #00DBDE, #FC00FF); }
+.btn-success { background: var(--success); color: #1a1a2e; }
+.btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--white); }
+.btn-back { background: rgba(255,255,255,0.1); color: var(--white); margin-top: 40px; }
+
+/* FORMULARIOS */
 input[type="text"] {
     width: 100%;
-    padding: 15px;
-    border: 2px solid #ddd;
-    border-radius: 10px;
-    font-size: 16px; /* Evita zoom automático en iOS */
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    color: white;
+    font-size: 16px; /* Evita zoom en iOS */
     box-sizing: border-box;
+    outline: none;
 }
 
+input[type="text"]:focus {
+    border-color: var(--accent);
+}
+
+/* CARDS Y LISTAS */
 .card {
-    background: white;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(5px);
     padding: 20px;
-    border-radius: 15px;
+    border-radius: 18px;
     margin-bottom: 12px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
 .task-item {
-    background: white;
+    background: rgba(255, 255, 255, 0.05);
     padding: 15px;
-    border-radius: 10px;
+    border-radius: 12px;
     margin-bottom: 8px;
     display: flex;
     align-items: center;
     gap: 15px;
 }
 
-input[type="checkbox"] { transform: scale(1.4); }
+input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+    accent-color: var(--success);
+}
+
+/* RESUMEN Y DRAG & DROP */
+.summary-block {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 15px;
+    margin-bottom: 25px;
+    border-left: 6px solid var(--accent);
+}
+
+.summary-block h3 {
+    margin-top: 0;
+    font-size: 1.1rem;
+    color: var(--warning);
+}
+
+.drag-item {
+    background: rgba(255, 255, 255, 0.1);
+    margin: 8px 0;
+    padding: 12px;
+    border-radius: 10px;
+    cursor: grab;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+}
+
+.drag-item:active { cursor: grabbing; }
+
+/* CONTADOR DE RACHA (ESTILO TIKTOK/DUOLINGO) */
+.streak-badge {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    padding: 12px 20px;
+    border-radius: 50px;
+    border: 2px solid var(--warning);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    z-index: 100;
+    animation: pulse 2s infinite;
+}
+
+.fire-icon { font-size: 1.4rem; }
+#streak-count { font-weight: 800; font-size: 1.3rem; color: var(--warning); }
+
+@keyframes pulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 204, 112, 0.4); }
+    70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(255, 204, 112, 0); }
+    100% { transform: scale(1); }
+}

@@ -16,6 +16,12 @@
             <button class="btn btn-primary" onclick="navigateTo('page-2-1')">Agregar actividad / curso</button>
             <button class="btn btn-danger" onclick="navigateTo('page-2-2')">Quitar actividad / curso</button>
             <button class="btn btn-outline" onclick="renderActivities()">Ver mis actividades</button>
+            <button class="btn btn-summary" onclick="renderSummary()">Ver resumen de actividades</button>
+        </div>
+
+        <div id="streak-container" class="streak-badge">
+            <span class="fire-icon">🔥</span>
+            <span id="streak-count">0</span>
         </div>
     </section>
 
@@ -62,8 +68,19 @@
         </div>
     </section>
 
+    <section id="page-summary" class="view hidden">
+        <div class="container">
+            <h2>Prioridades</h2>
+            <p style="font-size: 0.8rem; color: #666;">Arrastra para organizar</p>
+            <div id="summary-content" class="drag-container"></div>
+            <button class="btn btn-back" onclick="navigateTo('page-1')">Regresar</button>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script src="js/storage.js"></script>
     <script src="js/main.js"></script>
     <script src="js/app.js"></script>
+    
 </body>
 </html>
