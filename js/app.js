@@ -233,51 +233,74 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-// NUEVA FUNCIÓN: RENDER CALENDARIO
+// Función para generar un color único basado en texto (Hasing)
+function stringToColor(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const c = (hash & 0x00FFFFFF).toString(16).toUpperCase();
+    return "#" + "00000".substring(0, 6 - c.length) + c;
+}
+
+// ACTUALIZACIÓN DE RENDER CALENDAR
 function renderCalendar() {
     const pool = document.getElementById('pending-tasks-pool');
     const db = getDB();
     const weeklyData = JSON.parse(localStorage.getItem('organikhoda_weekly')) || {};
     
     pool.innerHTML = "";
-    
-    // 1. Limpiar los días antes de rellenar
     document.querySelectorAll('.day-dropzone').forEach(zone => zone.innerHTML = "");
 
-    // 2. Mostrar tareas en el "Pool" (tareas que NO tienen día asignado aún)
+    // Función auxiliar para crear el elemento de tarea con color y click
+    const createItem = (taskText, activityName) => {
+        const item = document.createElement('div');
+        item.className = 'calendar-task';
+        item.innerText = taskText;
+        
+        // Aplicar color según la actividad
+        const color = stringToColor(activityName);
+        item.style.backgroundColor = color;
+        
+        // Evento para ver detalle
+        item.onclick = (e) => {
+            // Evitamos que el click interfiera con el arrastre
+            if (!item.classList.contains('sortable-chosen')) {
+                showTaskDetail(activityName, taskText);
+            }
+        };
+        return item;
+    };
+
+    // Llenar el Pool y los días usando la función auxiliar
     db.forEach(act => {
         act.tareas.forEach(tarea => {
-            // Buscamos si esta tarea ya está asignada a algún día
+            const fullText = `${act.nombre}: ${tarea}`;
             let isAssigned = false;
             for(let day in weeklyData) {
-                if(weeklyData[day].includes(`${act.nombre}: ${tarea}`)) isAssigned = true;
+                if(weeklyData[day].includes(fullText)) isAssigned = true;
             }
 
             if(!isAssigned) {
-                const item = document.createElement('div');
-                item.className = 'calendar-task';
-                item.innerText = `${act.nombre}: ${tarea}`;
-                pool.appendChild(item);
+                pool.appendChild(createItem(fullText, act.nombre));
             }
         });
     });
 
-    // 3. Mostrar tareas ya asignadas en sus respectivos días
     for(let day in weeklyData) {
         const zone = document.getElementById(`drop-${day}`);
         weeklyData[day].forEach(taskText => {
-            const item = document.createElement('div');
-            item.className = 'calendar-task';
-            item.innerText = taskText;
-            zone.appendChild(item);
+            // Extraemos el nombre de la actividad para el color (asumiendo formato "Actividad: Tarea")
+            const activityPart = taskText.split(': ')[0];
+            zone.appendChild(createItem(taskText, activityPart));
         });
     }
 
-    // 4. Inicializar Sortable en el pool y en cada día
+    // Reiniciar Sortable
     const zones = document.querySelectorAll('.day-dropzone');
     [pool, ...zones].forEach(el => {
         new Sortable(el, {
-            group: 'weeklyShared', // Permite mover entre ellos
+            group: 'weeklyShared',
             animation: 150,
             onEnd: () => saveWeeklyOrder()
         });
@@ -286,19 +309,49 @@ function renderCalendar() {
     navigateTo('page-calendar');
 }
 
-// GUARDAR EL CALENDARIO SEMANAL
-function saveWeeklyOrder() {
-    const weeklyData = {};
-    const days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
-
-    days.forEach(day => {
-        const zone = document.getElementById(`drop-${day}`);
-        const tasksInDay = [];
-        zone.querySelectorAll('.calendar-task').forEach(t => {
-            tasksInDay.push(t.innerText);
-        });
-        weeklyData[day] = tasksInDay;
-    });
-
-    localStorage.setItem('organikhoda_weekly', JSON.stringify(weeklyData));
+// FUNCIÓN PARA MOSTRAR EL MODAL DE DETALLE
+function showTaskDetail(activity, task) {
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.innerHTML = `
+        <h3 style="color:${stringToColor(activity)}">${activity}</h3>
+        <p><strong>Tarea:</strong> ${task.replace(activity + ': ', '')}</p>
+        <hr>
+        <p style="font-size:0.8rem">Esta actividad pertenece a tus cursos/proyectos de ORGANIKhoda.</p>
+        <button class="btn btn-primary" onclick="this.parentElement.parentElement.remove()">Cerrar</button>
+    `;
+    
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+    
+    overlay.onclick = (e) => {
+        if(e.target === overlay) overlay.remove();
+    };
 }
+
+const createItem = (taskText, activityName) => {
+    const item = document.createElement('div');
+    item.className = 'calendar-task';
+    
+    // El texto se guarda internamente para el modal, 
+    // pero el CSS con font-size: 0 lo ocultará en las celdas
+    item.innerText = taskText; 
+    
+    const color = stringToColor(activityName);
+    item.style.backgroundColor = color;
+    
+    // Tooltip nativo (opcional): si dejas el dedo puesto 
+    // un segundo, el cel te mostrará el texto flotante
+    item.title = taskText; 
+
+    item.onclick = (e) => {
+        // Si no se está arrastrando, mostramos el detalle
+        if (!item.classList.contains('sortable-chosen')) {
+            showTaskDetail(activityName, taskText);
+        }
+    };
+    return item;
+};

@@ -227,3 +227,57 @@ input[type="checkbox"] {
     cursor: grab;
     white-space: nowrap;
 }
+
+/* Estilo para el Modal de Detalle */
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--bg);
+    border: 2px solid var(--accent);
+    padding: 25px;
+    border-radius: 20px;
+    z-index: 1000;
+    width: 80%;
+    max-width: 400px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.8);
+    text-align: center;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    z-index: 999;
+}
+
+/* Ajuste para que las tareas en el calendario sean solo bloques de color */
+.calendar-task {
+    padding: 10px; /* Un poco más de padding para que el bloque sea tocable */
+    border-radius: 8px; /* Forma de bloque/pixel */
+    font-size: 0; /* Oculta el texto físicamente */
+    cursor: grab;
+    margin: 4px;
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    min-height: 20px; /* Asegura que el bloque tenga cuerpo */
+    min-width: 20px;
+}
+
+/* Efecto al pasar el mouse o mantener presionado en el cel */
+.calendar-task:active {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(255,255,255,0.3);
+    cursor: grabbing;
+}
+
+/* El pool de tareas pendientes sí puede mostrar el texto 
+   para que sepas qué estás arrastrando */
+.tasks-pool .calendar-task {
+    font-size: 0.75rem; /* Aquí sí se ve el texto */
+    color: white;
+    text-align: center;
+    white-space: normal;
+    height: auto;
+}
