@@ -231,3 +231,74 @@ function saveOrder() {
 document.addEventListener('DOMContentLoaded', () => {
     updateStreak();
 });
+
+
+// NUEVA FUNCIÓN: RENDER CALENDARIO
+function renderCalendar() {
+    const pool = document.getElementById('pending-tasks-pool');
+    const db = getDB();
+    const weeklyData = JSON.parse(localStorage.getItem('organikhoda_weekly')) || {};
+    
+    pool.innerHTML = "";
+    
+    // 1. Limpiar los días antes de rellenar
+    document.querySelectorAll('.day-dropzone').forEach(zone => zone.innerHTML = "");
+
+    // 2. Mostrar tareas en el "Pool" (tareas que NO tienen día asignado aún)
+    db.forEach(act => {
+        act.tareas.forEach(tarea => {
+            // Buscamos si esta tarea ya está asignada a algún día
+            let isAssigned = false;
+            for(let day in weeklyData) {
+                if(weeklyData[day].includes(`${act.nombre}: ${tarea}`)) isAssigned = true;
+            }
+
+            if(!isAssigned) {
+                const item = document.createElement('div');
+                item.className = 'calendar-task';
+                item.innerText = `${act.nombre}: ${tarea}`;
+                pool.appendChild(item);
+            }
+        });
+    });
+
+    // 3. Mostrar tareas ya asignadas en sus respectivos días
+    for(let day in weeklyData) {
+        const zone = document.getElementById(`drop-${day}`);
+        weeklyData[day].forEach(taskText => {
+            const item = document.createElement('div');
+            item.className = 'calendar-task';
+            item.innerText = taskText;
+            zone.appendChild(item);
+        });
+    }
+
+    // 4. Inicializar Sortable en el pool y en cada día
+    const zones = document.querySelectorAll('.day-dropzone');
+    [pool, ...zones].forEach(el => {
+        new Sortable(el, {
+            group: 'weeklyShared', // Permite mover entre ellos
+            animation: 150,
+            onEnd: () => saveWeeklyOrder()
+        });
+    });
+
+    navigateTo('page-calendar');
+}
+
+// GUARDAR EL CALENDARIO SEMANAL
+function saveWeeklyOrder() {
+    const weeklyData = {};
+    const days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+
+    days.forEach(day => {
+        const zone = document.getElementById(`drop-${day}`);
+        const tasksInDay = [];
+        zone.querySelectorAll('.calendar-task').forEach(t => {
+            tasksInDay.push(t.innerText);
+        });
+        weeklyData[day] = tasksInDay;
+    });
+
+    localStorage.setItem('organikhoda_weekly', JSON.stringify(weeklyData));
+}

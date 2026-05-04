@@ -178,3 +178,52 @@ input[type="checkbox"] {
     70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(255, 204, 112, 0); }
     100% { transform: scale(1); }
 }
+
+
+.btn-calendar { background: linear-gradient(to right, #FF512F, #DD2476); }
+
+.week-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    margin-bottom: 20px;
+    overflow-x: auto; /* Para que en celular se pueda deslizar de lado */
+    padding-bottom: 10px;
+}
+
+.day-col {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    min-width: 80px;
+    text-align: center;
+}
+
+.day-col h4 { margin: 10px 0; font-size: 0.8rem; color: var(--warning); }
+
+.day-dropzone {
+    min-height: 100px;
+    background: rgba(0, 0, 0, 0.2);
+    margin: 5px;
+    border-radius: 8px;
+    padding: 5px;
+}
+
+.tasks-pool {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 15px;
+    border-radius: 15px;
+    min-height: 100px;
+}
+
+.calendar-task {
+    background: var(--accent);
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    cursor: grab;
+    white-space: nowrap;
+}
